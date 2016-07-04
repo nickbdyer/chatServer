@@ -1,0 +1,51 @@
+plugins {
+    id 'java'
+    id 'jacoco'
+    id 'com.github.kt3k.coveralls' version '2.6.3'
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'uk.nickbdyer.chatServer.Main'
+    }
+}
+
+apply plugin: 'application'
+
+mainClassName = "uk.nickbdyer.chatServer.Main"
+
+run {
+    standardInput = System.in
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testCompile 'junit:junit:4.12'
+}
+
+test {
+    testLogging {
+        events "passed", "skipped", "failed"
+    }
+}
+
+jacocoTestReport {
+    reports {
+        xml.enabled = true
+        html.enabled = true
+    }
+
+    afterEvaluate {
+        classDirectories = files(classDirectories.files.collect {
+            fileTree(dir: it,
+                    exclude: [ '**/Main.*',
+                               '**/ThreadDelayer.*'
+                    ])
+        })
+    }
+}
+
+check.dependsOn jacocoTestReport
