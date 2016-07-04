@@ -6,13 +6,13 @@ plugins {
 
 jar {
     manifest {
-        attributes 'Main-Class': 'uk.nickbdyer.chatServer.Main'
+        attributes 'Main-Class': 'uk.nickbdyer.chatServer.EchoServer'
     }
 }
 
 apply plugin: 'application'
 
-mainClassName = "uk.nickbdyer.chatServer.Main"
+mainClassName = "uk.nickbdyer.chatServer.EchoServer"
 
 run {
     standardInput = System.in
