@@ -4,12 +4,9 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-public class FaultyServerSocket extends ServerSocket {
+class FaultyServerSocket extends ServerSocket {
 
-    public boolean hasAcceptBeenCalled;
-
-    public FaultyServerSocket() throws IOException {
-        this.hasAcceptBeenCalled = false;
+    FaultyServerSocket() throws IOException {
     }
 
     @Override

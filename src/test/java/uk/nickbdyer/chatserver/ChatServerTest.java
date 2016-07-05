@@ -28,6 +28,7 @@ public class ChatServerTest {
     @After
     public void tearDown() throws IOException {
         serverSocket.close();
+        receivedMessage.close();
     }
 
     @Test

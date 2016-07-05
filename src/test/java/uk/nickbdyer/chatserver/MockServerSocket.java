@@ -4,11 +4,11 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-public class MockServerSocket extends ServerSocket {
+class MockServerSocket extends ServerSocket {
 
-    public boolean hasAcceptBeenCalled;
+    boolean hasAcceptBeenCalled;
 
-    public MockServerSocket() throws IOException {
+    MockServerSocket() throws IOException {
         this.hasAcceptBeenCalled = false;
     }
 
