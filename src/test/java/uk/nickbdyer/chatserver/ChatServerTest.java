@@ -18,4 +18,19 @@ public class ChatServerTest {
         assertTrue(mockServerSocket.hasAcceptBeenCalled);
     }
 
+    @Test(expected=RuntimeException.class)
+    public void ifTheServerSocketCannotAcceptConnectionsARunTimeExceptionWillBeThrown() {
+        FaultyServerSocket mockServerSocket = null;
+        try {
+            mockServerSocket = new FaultyServerSocket();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        ChatServer chatServer = new ChatServer(mockServerSocket);
+
+        chatServer.listen();
+    }
+
+
+
 }

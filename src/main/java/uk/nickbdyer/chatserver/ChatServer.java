@@ -15,7 +15,7 @@ public class ChatServer {
         try {
             serverSocket.accept();
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
 }
