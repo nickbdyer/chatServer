@@ -2,13 +2,32 @@ package uk.nickbdyer.chatServer;
 
 import org.junit.Test;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+
 import static org.junit.Assert.assertEquals;
 
 public class ChatRoomTest {
     
     @Test
-    public void containsKnowSentencesWhenInitialized() {
-        ChatRoom chatRoom = new ChatRoom();
+    public void containsNoSentencesWhenInitialized() {
+        InputStream in = new ByteArrayInputStream("".getBytes());
+        OutputStream out = new ByteArrayOutputStream();
+        ChatRoom chatRoom = new ChatRoom(in, out);
         assertEquals(0, chatRoom.numberOfSentences());
     }
+
+    @Test
+    public void outputsTheSentenceThatWasPassedIn() {
+        InputStream in = new ByteArrayInputStream("Hello".getBytes());
+        OutputStream out = new ByteArrayOutputStream();
+        ChatRoom chatRoom = new ChatRoom(in, out);
+
+        chatRoom.sendInputToOutput();
+
+        assertEquals("Hello", out.toString());
+    }
+
 }
