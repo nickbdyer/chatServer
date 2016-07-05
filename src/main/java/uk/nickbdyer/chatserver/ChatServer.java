@@ -8,12 +8,11 @@ public class ChatServer {
 
     private ServerSocket serverSocket;
     private Socket clientSocket;
-    private PrintStream output;
-    private BufferedReader clientInput;
+    private OutputStream output;
 
     public ChatServer(ServerSocket serverSocket, OutputStream receivedMessage) {
         this.serverSocket = serverSocket;
-        this.output = new PrintStream(receivedMessage);
+        this.output = receivedMessage;
     }
 
     public void listen() {
@@ -26,8 +25,8 @@ public class ChatServer {
 
     public void receiveMessage() {
         try {
-            clientInput = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-            output.print(clientInput.readLine());
+            ChatRoom chatRoom = new ChatRoom(clientSocket.getInputStream(), output);
+            chatRoom.sendInputToOutput();
         } catch (IOException e) {
             e.printStackTrace();
         }
