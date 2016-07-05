@@ -1,6 +1,7 @@
 package uk.nickbdyer.chatServer;
 
 import java.io.*;
+import java.util.Optional;
 
 public class ChatRoom {
 
@@ -12,13 +13,10 @@ public class ChatRoom {
         this.output = new PrintStream(outputStream);
     }
 
-    public int numberOfSentences() {
-        return 0;
-    }
-
     public void sendInputToOutput() {
         try {
-            output.print(input.readLine());
+            Optional<String> sentence = Optional.ofNullable(input.readLine());
+            output.print(sentence.orElse(""));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

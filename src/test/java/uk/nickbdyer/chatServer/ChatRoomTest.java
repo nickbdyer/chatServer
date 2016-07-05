@@ -16,7 +16,10 @@ public class ChatRoomTest {
         InputStream in = new ByteArrayInputStream("".getBytes());
         OutputStream out = new ByteArrayOutputStream();
         ChatRoom chatRoom = new ChatRoom(in, out);
-        assertEquals(0, chatRoom.numberOfSentences());
+
+        chatRoom.sendInputToOutput();
+
+        assertEquals("", out.toString());
     }
 
     @Test
@@ -39,7 +42,6 @@ public class ChatRoomTest {
         chatRoom.sendInputToOutput();
 
         assertEquals("Hi", out.toString());
-
     }
 
 }
