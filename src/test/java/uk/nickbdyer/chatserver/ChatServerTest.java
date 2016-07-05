@@ -3,6 +3,8 @@ package uk.nickbdyer.chatserver;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import uk.nickbdyer.chatserver.mockObjects.FaultyServerSocket;
+import uk.nickbdyer.chatserver.mockObjects.MockServerSocket;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -48,7 +50,7 @@ public class ChatServerTest {
 
         chatServer.listen();
     }
-    
+
     @Test
     public void aClientSocketCanConnectToTheServer() throws IOException, InterruptedException {
         Thread serverThread = new Thread(() -> {

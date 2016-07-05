@@ -3,6 +3,7 @@ package uk.nickbdyer.chatserver;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import uk.nickbdyer.chatserver.mockObjects.UnReadableInputStream;
 
 import java.io.*;
 
