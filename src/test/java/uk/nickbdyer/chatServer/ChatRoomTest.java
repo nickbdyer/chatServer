@@ -1,5 +1,7 @@
 package uk.nickbdyer.chatserver;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.io.*;
@@ -7,11 +9,22 @@ import java.io.*;
 import static org.junit.Assert.assertEquals;
 
 public class ChatRoomTest {
+
+    private OutputStream out;
+
+    @Before
+    public void setUp() {
+        out = new ByteArrayOutputStream();
+    }
+
+    @After
+    public void tearDown() throws IOException {
+        out.close();
+    }
     
     @Test
-    public void containsNoSentencesWhenInitialized() {
+    public void outputsANewLineWhenInputIsEmptyString() {
         InputStream in = new ByteArrayInputStream("".getBytes());
-        OutputStream out = new ByteArrayOutputStream();
         ChatRoom chatRoom = new ChatRoom(in, out);
 
         chatRoom.sendInputToOutput();
@@ -20,9 +33,8 @@ public class ChatRoomTest {
     }
 
     @Test
-    public void outputsHelloWhenTheSentenceThatWasPassedInWasHello() {
+    public void outputsHelloWhenTheInputIsHello() {
         InputStream in = new ByteArrayInputStream("Hello".getBytes());
-        OutputStream out = new ByteArrayOutputStream();
         ChatRoom chatRoom = new ChatRoom(in, out);
 
         chatRoom.sendInputToOutput();
@@ -31,9 +43,8 @@ public class ChatRoomTest {
     }
     
     @Test
-    public void outputsHiWhenTheSentenceThatWasPassedInWasHi() {
+    public void outputsHiWhenTheInputIsHi() {
         InputStream in = new ByteArrayInputStream("Hi".getBytes());
-        OutputStream out = new ByteArrayOutputStream();
         ChatRoom chatRoom = new ChatRoom(in, out);
 
         chatRoom.sendInputToOutput();
@@ -42,9 +53,8 @@ public class ChatRoomTest {
     }
 
     @Test(expected=RuntimeException.class)
-    public void throwsExceptionIfInputStreamCannotRead() {
+    public void throwsExceptionIfInputStreamIsUnreadable() {
         InputStream in = new UnReadableInputStream();
-        OutputStream out = new ByteArrayOutputStream();
         ChatRoom chatRoom = new ChatRoom(in, out);
 
         chatRoom.sendInputToOutput();
