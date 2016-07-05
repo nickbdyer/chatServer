@@ -10,6 +10,13 @@ public class ChatServer {
     private Socket clientSocket;
     private OutputStream output;
 
+    public static void main(String[] args) throws IOException {
+        ServerSocket socket = new ServerSocket(Integer.parseInt(args[0]));
+        ChatServer chatServer = new ChatServer(socket, System.out);
+        chatServer.listen();
+        chatServer.receiveMessage();
+    }
+
     public ChatServer(ServerSocket serverSocket, OutputStream receivedMessage) {
         this.serverSocket = serverSocket;
         this.output = receivedMessage;
