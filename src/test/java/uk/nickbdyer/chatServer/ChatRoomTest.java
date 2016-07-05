@@ -16,7 +16,7 @@ public class ChatRoomTest {
 
         chatRoom.sendInputToOutput();
 
-        assertEquals("", out.toString());
+        assertEquals("\n", out.toString());
     }
 
     @Test
@@ -27,7 +27,7 @@ public class ChatRoomTest {
 
         chatRoom.sendInputToOutput();
 
-        assertEquals("Hello", out.toString());
+        assertEquals("Hello\n", out.toString());
     }
     
     @Test
@@ -38,7 +38,7 @@ public class ChatRoomTest {
 
         chatRoom.sendInputToOutput();
 
-        assertEquals("Hi", out.toString());
+        assertEquals("Hi\n", out.toString());
     }
 
     @Test(expected=RuntimeException.class)

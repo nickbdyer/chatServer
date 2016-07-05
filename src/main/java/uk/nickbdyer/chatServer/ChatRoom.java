@@ -16,7 +16,7 @@ public class ChatRoom {
     public void sendInputToOutput() {
         try {
             Optional<String> sentence = Optional.ofNullable(input.readLine());
-            output.print(sentence.orElse(""));
+            output.println(sentence.orElse(""));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

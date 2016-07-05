@@ -77,7 +77,7 @@ public class ChatServerTest {
         receiveMessageThread.start();
         receiveMessageThread.join();
 
-        assertEquals("A Message", receivedMessage.toString());
+        assertEquals("A Message\n", receivedMessage.toString());
     }
 
 
