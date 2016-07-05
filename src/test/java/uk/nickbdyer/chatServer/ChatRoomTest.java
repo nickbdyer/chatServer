@@ -2,10 +2,7 @@ package uk.nickbdyer.chatserver;
 
 import org.junit.Test;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 
 import static org.junit.Assert.assertEquals;
 
@@ -42,6 +39,15 @@ public class ChatRoomTest {
         chatRoom.sendInputToOutput();
 
         assertEquals("Hi", out.toString());
+    }
+
+    @Test(expected=RuntimeException.class)
+    public void throwsExceptionIfInputStreamCannotRead() {
+        InputStream in = new UnReadableInputStream();
+        OutputStream out = new ByteArrayOutputStream();
+        ChatRoom chatRoom = new ChatRoom(in, out);
+
+        chatRoom.sendInputToOutput();
     }
 
 }
