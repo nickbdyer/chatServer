@@ -28,7 +28,7 @@ public class ChatServer {
             ChatRoom chatRoom = new ChatRoom(clientSocket.getInputStream(), output);
             chatRoom.sendInputToOutput();
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
 

@@ -45,10 +45,19 @@ public class ChatServerTest {
 
     @Test(expected=RuntimeException.class)
     public void ifTheServerSocketCannotAcceptConnectionsARunTimeExceptionWillBeThrown() throws IOException {
-        FaultyServerSocket mockServerSocket = new FaultyServerSocket();
+        FaultyServerSocket faultyServerSocket = new FaultyServerSocket();
+        ChatServer chatServer = new ChatServer(faultyServerSocket, receivedMessage);
+
+        chatServer.listen();
+    }
+
+    @Test(expected=RuntimeException.class)
+    public void ifTheServerSocketCannotGetInputStreamARunTimeExceptionWillBeThrown() throws IOException {
+        MockServerSocket mockServerSocket = new MockServerSocket();
         ChatServer chatServer = new ChatServer(mockServerSocket, receivedMessage);
 
         chatServer.listen();
+        chatServer.receiveMessage();
     }
 
     @Test
