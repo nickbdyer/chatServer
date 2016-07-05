@@ -15,7 +15,7 @@ public class MockServerSocket extends ServerSocket {
     @Override
     public Socket accept() {
         this.hasAcceptBeenCalled = true;
-        return new MockClientSocket();
+        return new FaultyClientSocket();
     }
 
 }

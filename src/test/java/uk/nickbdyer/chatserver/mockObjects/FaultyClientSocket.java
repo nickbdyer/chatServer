@@ -4,9 +4,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.Socket;
 
-class MockClientSocket extends Socket {
+class FaultyClientSocket extends Socket {
 
-    MockClientSocket() {}
+    FaultyClientSocket() {}
 
     @Override
     public InputStream getInputStream() throws IOException {
