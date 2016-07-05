@@ -1,4 +1,4 @@
-package uk.nickbdyer.chatServer;
+package uk.nickbdyer.chatserver;
 
 import org.junit.Test;
 
