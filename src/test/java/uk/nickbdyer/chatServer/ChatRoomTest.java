@@ -20,7 +20,7 @@ public class ChatRoomTest {
     }
 
     @Test
-    public void outputsTheSentenceThatWasPassedIn() {
+    public void outputsHelloWhenTheSentenceThatWasPassedInWasHello() {
         InputStream in = new ByteArrayInputStream("Hello".getBytes());
         OutputStream out = new ByteArrayOutputStream();
         ChatRoom chatRoom = new ChatRoom(in, out);
@@ -28,6 +28,18 @@ public class ChatRoomTest {
         chatRoom.sendInputToOutput();
 
         assertEquals("Hello", out.toString());
+    }
+    
+    @Test
+    public void outputsHiWhenTheSentenceThatWasPassedInWasHi() {
+        InputStream in = new ByteArrayInputStream("Hi".getBytes());
+        OutputStream out = new ByteArrayOutputStream();
+        ChatRoom chatRoom = new ChatRoom(in, out);
+
+        chatRoom.sendInputToOutput();
+
+        assertEquals("Hi", out.toString());
+
     }
 
 }
