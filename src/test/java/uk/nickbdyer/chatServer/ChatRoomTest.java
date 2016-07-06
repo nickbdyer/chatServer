@@ -22,10 +22,20 @@ public class ChatRoomTest {
     public void tearDown() throws IOException {
         out.close();
     }
-    
+
     @Test
-    public void outputsANewLineWhenInputIsEmptyString() {
+    public void outputsANothingWhenNothingIsSent() {
         InputStream in = new ByteArrayInputStream("".getBytes());
+        ChatRoom chatRoom = new ChatRoom(in, out);
+
+        chatRoom.sendInputToOutput();
+
+        assertEquals("", out.toString());
+    }
+
+    @Test
+    public void outputsANewLineWhenInputIsEmptyStringWithNewLine() {
+        InputStream in = new ByteArrayInputStream("\n".getBytes());
         ChatRoom chatRoom = new ChatRoom(in, out);
 
         chatRoom.sendInputToOutput();

@@ -51,6 +51,15 @@ public class ChatServerTest {
         assertEquals("A Message\n", receivedMessage.toString());
     }
 
+    @Test
+    public void aConnectedClientCanSendMultipleMessagesToTheServer() throws InterruptedException, IOException {
+        Socket clientSocket = openServerSocketAndMakeClientConnection();
+
+        sendMessageToServer(clientSocket, "A Message\nAnother Message");
+
+        assertEquals("A Message\nAnother Message\n", receivedMessage.toString());
+    }
+
     //Tests for Raised Exceptions
 
     @Test(expected=RuntimeException.class)
@@ -79,17 +88,13 @@ public class ChatServerTest {
     }
 
     private void sendMessageToServer(Socket clientSocket, String message) throws IOException, InterruptedException {
-        PrintWriter output = new PrintWriter(clientSocket.getOutputStream(), true);
+        OutputStream clientOutputStream = clientSocket.getOutputStream();
+        PrintWriter output = new PrintWriter(clientOutputStream, true);
         Thread receiveMessageThread = new Thread(chatServer::receiveMessage);
         receiveMessageThread.start();
         output.println(message);
+        clientOutputStream.close();
         receiveMessageThread.join();
     }
-
-    // Refactor this test suite
-    // Test to prompt while loop for message reading
-    // Server and client stay live until client ctrl-c
-
-
 
 }
