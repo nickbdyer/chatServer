@@ -1,10 +1,10 @@
-package uk.nickbdyer.chatserver;
+package uk.nickbdyer.chatpackage;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import uk.nickbdyer.chatserver.mockObjects.FaultyServerSocket;
-import uk.nickbdyer.chatserver.mockObjects.MockServerSocket;
+import uk.nickbdyer.chatpackage.mockObjects.FaultyServerSocket;
+import uk.nickbdyer.chatpackage.mockObjects.MockServerSocket;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
