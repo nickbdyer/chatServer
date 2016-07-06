@@ -1,8 +1,5 @@
 package uk.nickbdyer.chatserver;
 
-import java.io.PrintStream;
-import java.util.Optional;
-
 public class UserInputValidator {
 
     public static Integer getPortNumber(String[] args) {
@@ -13,4 +10,5 @@ public class UserInputValidator {
             throw new RuntimeException("Incorrect Port Format");
         }
     }
+
 }
