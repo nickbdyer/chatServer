@@ -29,21 +29,19 @@ public class RunnerTest {
 
     @Test
     public void advisesUserToPassPortAsArgumentIfNotPresent() {
-        Runner runner = new Runner(new String[]{}, out);
-        runner.checkPortNumberIsPresent();
+        Runner.getPortNumber(new String[]{}, out);
         assertEquals("Usage: java -jar build/libs/chatServer.jar <port_number>\n", outContent.toString());
     }
 
     @Test
     public void advisesUserToPassPortAsNumberIfNotTheyPassAlphabeticalCharacters() {
-        Runner runner = new Runner(new String[]{"abc"}, out);
-        runner.checkPortNumberIsPresent();
+        Runner.getPortNumber(new String[]{"abc"}, out);
         assertEquals("Incorrect port format\n", outContent.toString());
     }
 
     @Test
     public void returnsPortNumberIfPresent() {
-        Runner runner = new Runner(new String[]{"4444"}, out);
-        assertEquals(4444, runner.checkPortNumberIsPresent().get().intValue());
+        int portNumber = Runner.getPortNumber(new String[]{"4444"}, out).get();
+        assertEquals(4444, portNumber);
     }
 }
