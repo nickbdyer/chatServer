@@ -6,13 +6,13 @@ plugins {
 
 jar {
     manifest {
-        attributes 'Main-Class': 'uk.nickbdyer.chatServer.EchoServer'
+        attributes 'Main-Class': 'uk.nickbdyer.chatserver.Main'
     }
 }
 
 apply plugin: 'application'
 
-mainClassName = "uk.nickbdyer.chatServer.EchoServer"
+mainClassName = "uk.nickbdyer.chatserver.Main"
 
 run {
     standardInput = System.in
@@ -40,10 +40,7 @@ jacocoTestReport {
 
     afterEvaluate {
         classDirectories = files(classDirectories.files.collect {
-            fileTree(dir: it,
-                    exclude: [ '**/Main.*',
-                               '**/ThreadDelayer.*'
-                    ])
+            fileTree(dir: it, exclude: [ '**/Main.*' ])
         })
     }
 }

@@ -1,17 +1,31 @@
 package uk.nickbdyer.chatserver;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
+import uk.nickbdyer.chatserver.mockObjects.UnReadableInputStream;
 
 import java.io.*;
 
 import static org.junit.Assert.assertEquals;
 
 public class ChatRoomTest {
-    
+
+    private OutputStream out;
+
+    @Before
+    public void setUp() {
+        out = new ByteArrayOutputStream();
+    }
+
+    @After
+    public void tearDown() throws IOException {
+        out.close();
+    }
+
     @Test
-    public void containsNoSentencesWhenInitialized() {
+    public void outputsANothingWhenNothingIsSent() {
         InputStream in = new ByteArrayInputStream("".getBytes());
-        OutputStream out = new ByteArrayOutputStream();
         ChatRoom chatRoom = new ChatRoom(in, out);
 
         chatRoom.sendInputToOutput();
@@ -20,31 +34,38 @@ public class ChatRoomTest {
     }
 
     @Test
-    public void outputsHelloWhenTheSentenceThatWasPassedInWasHello() {
-        InputStream in = new ByteArrayInputStream("Hello".getBytes());
-        OutputStream out = new ByteArrayOutputStream();
+    public void outputsANewLineWhenInputIsEmptyStringWithNewLine() {
+        InputStream in = new ByteArrayInputStream("\n".getBytes());
         ChatRoom chatRoom = new ChatRoom(in, out);
 
         chatRoom.sendInputToOutput();
 
-        assertEquals("Hello", out.toString());
+        assertEquals("\n", out.toString());
+    }
+
+    @Test
+    public void outputsHelloWhenTheInputIsHello() {
+        InputStream in = new ByteArrayInputStream("Hello".getBytes());
+        ChatRoom chatRoom = new ChatRoom(in, out);
+
+        chatRoom.sendInputToOutput();
+
+        assertEquals("Hello\n", out.toString());
     }
     
     @Test
-    public void outputsHiWhenTheSentenceThatWasPassedInWasHi() {
+    public void outputsHiWhenTheInputIsHi() {
         InputStream in = new ByteArrayInputStream("Hi".getBytes());
-        OutputStream out = new ByteArrayOutputStream();
         ChatRoom chatRoom = new ChatRoom(in, out);
 
         chatRoom.sendInputToOutput();
 
-        assertEquals("Hi", out.toString());
+        assertEquals("Hi\n", out.toString());
     }
 
     @Test(expected=RuntimeException.class)
-    public void throwsExceptionIfInputStreamCannotRead() {
+    public void throwsExceptionIfInputStreamIsUnreadable() {
         InputStream in = new UnReadableInputStream();
-        OutputStream out = new ByteArrayOutputStream();
         ChatRoom chatRoom = new ChatRoom(in, out);
 
         chatRoom.sendInputToOutput();

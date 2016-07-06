@@ -8,15 +8,17 @@ public class ChatRoom {
     private BufferedReader input;
     private PrintStream output;
 
-    public ChatRoom(InputStream inputStream, OutputStream outputStream) {
-        this.input = new BufferedReader(new InputStreamReader(inputStream));
-        this.output = new PrintStream(outputStream);
+    public ChatRoom(InputStream input, OutputStream output) {
+        this.input = new BufferedReader(new InputStreamReader(input));
+        this.output = new PrintStream(output);
     }
 
     public void sendInputToOutput() {
         try {
-            Optional<String> sentence = Optional.ofNullable(input.readLine());
-            output.print(sentence.orElse(""));
+            String sentence;
+            while ((sentence = input.readLine()) != null) {
+                output.println(sentence);
+            }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
