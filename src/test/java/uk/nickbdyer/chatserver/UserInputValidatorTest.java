@@ -4,7 +4,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
-public class UserInputValidatorTest {
+public class UserInputValidatorTest extends UserInputValidator {
 
     @Test
     public void returnsPortNumberIfPresent() {
