@@ -1,4 +1,4 @@
-package uk.nickbdyer.chatpackage;
+package uk.nickbdyer.chatserver;
 
 import java.io.*;
 
