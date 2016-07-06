@@ -37,25 +37,26 @@ public class ChatServerTest {
 
     @Test
     public void aClientSocketCanConnectToTheServer() throws IOException, InterruptedException {
-        Socket clientSocket = openServerSocketAndMakeClientConnection();
+        Thread serverThread = new Thread(chatServer::listen);
+        serverThread.start();
+
+        Socket clientSocket = new Socket("localhost", 4440);
+        sendMessageFromClientToServer(clientSocket, "");
+        serverThread.join();
 
         assertTrue(clientSocket.isConnected());
     }
 
     @Test
     public void aConnectedClientCanSendAMessageToTheServer() throws InterruptedException, IOException {
-        Socket clientSocket = openServerSocketAndMakeClientConnection();
-
-        sendMessageToServer(clientSocket, "A Message");
+        makeSocketConnectionAndSendMessage("A Message");
 
         assertEquals("A Message\n", receivedMessage.toString());
     }
 
     @Test
     public void aConnectedClientCanSendMultipleMessagesToTheServer() throws InterruptedException, IOException {
-        Socket clientSocket = openServerSocketAndMakeClientConnection();
-
-        sendMessageToServer(clientSocket, "A Message\nAnother Message");
+        makeSocketConnectionAndSendMessage("A Message\nAnother Message");
 
         assertEquals("A Message\nAnother Message\n", receivedMessage.toString());
     }
@@ -76,25 +77,19 @@ public class ChatServerTest {
         ChatServer chatServer = new ChatServer(mockServerSocket, receivedMessage);
 
         chatServer.listen();
-        chatServer.receiveMessage();
     }
 
-    private Socket openServerSocketAndMakeClientConnection() throws IOException, InterruptedException {
+    private void makeSocketConnectionAndSendMessage(String message) throws IOException, InterruptedException {
         Thread serverThread = new Thread(chatServer::listen);
         serverThread.start();
-        Socket clientSocket = new Socket("localhost", 4440);
+        sendMessageFromClientToServer(new Socket("localhost", 4440), message);
         serverThread.join();
-        return clientSocket;
     }
 
-    private void sendMessageToServer(Socket clientSocket, String message) throws IOException, InterruptedException {
-        OutputStream clientOutputStream = clientSocket.getOutputStream();
-        PrintWriter output = new PrintWriter(clientOutputStream, true);
-        Thread receiveMessageThread = new Thread(chatServer::receiveMessage);
-        receiveMessageThread.start();
+    private void sendMessageFromClientToServer(Socket clientSocket, String message) throws IOException {
+        PrintWriter output = new PrintWriter(clientSocket.getOutputStream(), true);
         output.println(message);
-        clientOutputStream.close();
-        receiveMessageThread.join();
+        output.close();
     }
 
 }
