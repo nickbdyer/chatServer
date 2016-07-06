@@ -20,6 +20,7 @@ $ ./gradlew build
 ```
 
 ###Run Program
+If no port number is provided it will start on 4444.
 ```shell
 $ java -jar build/libs/chatServer.jar <port_number>
 ```
