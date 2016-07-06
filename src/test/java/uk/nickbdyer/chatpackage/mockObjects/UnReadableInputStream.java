@@ -1,4 +1,4 @@
-package uk.nickbdyer.chatserver.mockObjects;
+package uk.nickbdyer.chatpackage.mockObjects;
 
 import java.io.IOException;
 import java.io.InputStream;

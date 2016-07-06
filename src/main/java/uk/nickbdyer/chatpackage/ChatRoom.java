@@ -1,7 +1,6 @@
-package uk.nickbdyer.chatserver;
+package uk.nickbdyer.chatpackage;
 
 import java.io.*;
-import java.util.Optional;
 
 public class ChatRoom {
 

@@ -1,9 +1,9 @@
-package uk.nickbdyer.chatserver;
+package uk.nickbdyer.chatpackage;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import uk.nickbdyer.chatserver.mockObjects.UnReadableInputStream;
+import uk.nickbdyer.chatpackage.mockObjects.UnReadableInputStream;
 
 import java.io.*;
 

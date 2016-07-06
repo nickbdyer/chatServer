@@ -1,4 +1,4 @@
-package uk.nickbdyer.chatserver;
+package uk.nickbdyer.chatpackage;
 
 import java.io.IOException;
 import java.net.ServerSocket;
