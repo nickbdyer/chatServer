@@ -6,15 +6,11 @@ import java.net.Socket;
 
 public class MockServerSocket extends ServerSocket {
 
-    public boolean hasAcceptBeenCalled;
-
     public MockServerSocket() throws IOException {
-        this.hasAcceptBeenCalled = false;
     }
 
     @Override
     public Socket accept() {
-        this.hasAcceptBeenCalled = true;
         return new FaultyClientSocket();
     }
 

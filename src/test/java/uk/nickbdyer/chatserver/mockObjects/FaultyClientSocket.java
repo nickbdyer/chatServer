@@ -6,10 +6,9 @@ import java.net.Socket;
 
 class FaultyClientSocket extends Socket {
 
-    FaultyClientSocket() {}
-
     @Override
     public InputStream getInputStream() throws IOException {
         throw new IOException();
     }
+
 }

@@ -20,11 +20,13 @@ public class ChatServerTest {
 
     private ServerSocket serverSocket;
     private OutputStream receivedMessage;
+    private ChatServer chatServer;
 
     @Before
     public void setUp() throws IOException {
         receivedMessage = new ByteArrayOutputStream();
         serverSocket = new ServerSocket(4440);
+        chatServer = new ChatServer(serverSocket, receivedMessage);
     }
 
     @After
@@ -34,14 +36,22 @@ public class ChatServerTest {
     }
 
     @Test
-    public void whenListeningForConnectionsTheServerSocketWillHaveAcceptCalled() throws IOException {
-        MockServerSocket mockServerSocket = new MockServerSocket();
-        ChatServer chatServer = new ChatServer(mockServerSocket, receivedMessage);
+    public void aClientSocketCanConnectToTheServer() throws IOException, InterruptedException {
+        Socket clientSocket = openServerSocketAndMakeClientConnection();
 
-        chatServer.listen();
-
-        assertTrue(mockServerSocket.hasAcceptBeenCalled);
+        assertTrue(clientSocket.isConnected());
     }
+
+    @Test
+    public void aConnectedClientCanSendAMessageToTheServer() throws InterruptedException, IOException {
+        Socket clientSocket = openServerSocketAndMakeClientConnection();
+
+        sendMessageToServer(clientSocket, "A Message");
+
+        assertEquals("A Message\n", receivedMessage.toString());
+    }
+
+    //Tests for Raised Exceptions
 
     @Test(expected=RuntimeException.class)
     public void ifTheServerSocketCannotAcceptConnectionsARunTimeExceptionWillBeThrown() throws IOException {
@@ -60,37 +70,25 @@ public class ChatServerTest {
         chatServer.receiveMessage();
     }
 
-    @Test
-    public void aClientSocketCanConnectToTheServer() throws IOException, InterruptedException {
-        Thread serverThread = new Thread(() -> {
-            ChatServer chatServer = new ChatServer(serverSocket, receivedMessage);
-            chatServer.listen();
-        });
+    private Socket openServerSocketAndMakeClientConnection() throws IOException, InterruptedException {
+        Thread serverThread = new Thread(chatServer::listen);
         serverThread.start();
         Socket clientSocket = new Socket("localhost", 4440);
         serverThread.join();
-
-        assertTrue(clientSocket.isConnected());
+        return clientSocket;
     }
-    
-    @Test
-    public void aConnectedClientCanSendAMessageToTheServer() throws InterruptedException, IOException {
-        ChatServer chatServer = new ChatServer(serverSocket, receivedMessage);
-        Thread listenThread = new Thread(chatServer::listen);
-        listenThread.start();
-        Socket clientSocket = new Socket("localhost", 4440);
-        listenThread.join();
 
+    private void sendMessageToServer(Socket clientSocket, String message) throws IOException, InterruptedException {
         PrintWriter output = new PrintWriter(clientSocket.getOutputStream(), true);
-        output.println("A Message");
-
         Thread receiveMessageThread = new Thread(chatServer::receiveMessage);
         receiveMessageThread.start();
+        output.println(message);
         receiveMessageThread.join();
-
-        assertEquals("A Message\n", receivedMessage.toString());
     }
 
+    // Refactor this test suite
+    // Test to prompt while loop for message reading
+    // Server and client stay live until client ctrl-c
 
 
 
