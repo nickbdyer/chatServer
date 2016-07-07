@@ -60,21 +60,35 @@ public class ChatServerTest {
 
         assertEquals("A Message\nAnother Message\n", receivedMessage.toString());
     }
-    
+
     @Test
     public void aServerCanReceiveMessagesFromMulitpleClients() throws IOException, InterruptedException {
-        Thread serverThread = new Thread(chatServer::acceptConnections);
+        Thread serverThread = new Thread(chatServer::acceptConnections, "Server Thread");
+        serverThread.setUncaughtExceptionHandler((th, ex) -> System.out.println("Uncaught exception: " + ex));
         serverThread.start();
 
-        sendMessageFromClientToServer(new Socket("localhost", 4440), "Client1: Message");
-        sendMessageFromClientToServer(new Socket("localhost", 4440), "Client2: Another Message");
+        sendTwoMessagesFromTwoDifferentSockets();
 
         assertEquals("Client1: Message\nClient2: Another Message\n", receivedMessage.toString());
     }
 
+    private void sendTwoMessagesFromTwoDifferentSockets() throws InterruptedException {
+        Thread clientThreads = new Thread(() -> {
+            try {
+                sendMessageFromClientToServer(new Socket("localhost", 4440), "Client1: Message");
+                sendMessageFromClientToServer(new Socket("localhost", 4440), "Client2: Another Message");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        );
+        clientThreads.start();
+        clientThreads.join();
+    }
+
     //Tests for Raised Exceptions
 
-    @Test(expected=RuntimeException.class)
+    @Test(expected = RuntimeException.class)
     public void ifTheServerSocketCannotAcceptConnectionsARunTimeExceptionWillBeThrown() throws IOException {
         FaultyServerSocket faultyServerSocket = new FaultyServerSocket();
         ChatServer chatServer = new ChatServer(faultyServerSocket, receivedMessage);
@@ -82,7 +96,7 @@ public class ChatServerTest {
         chatServer.listen();
     }
 
-    @Test(expected=RuntimeException.class)
+    @Test(expected = RuntimeException.class)
     public void ifTheServerSocketCannotGetInputStreamARunTimeExceptionWillBeThrown() throws IOException {
         MockServerSocket mockServerSocket = new MockServerSocket();
         ChatServer chatServer = new ChatServer(mockServerSocket, receivedMessage);
