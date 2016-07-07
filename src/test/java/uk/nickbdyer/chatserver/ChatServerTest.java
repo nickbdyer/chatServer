@@ -60,6 +60,14 @@ public class ChatServerTest {
 
         assertEquals("A Message\nAnother Message\n", receivedMessage.toString());
     }
+    
+    @Test
+    public void aServerCanReceiveMessagesFromMulitpleClients() throws IOException, InterruptedException {
+        makeSocketConnectionAndSendMessage("Client1: Message");
+        sendMessageFromClientToServer(new Socket("localhost", 4440), "Client2: Another Message");
+
+        assertEquals("Client1: Message\nClient2: Another Message\n", receivedMessage.toString());
+    }
 
     //Tests for Raised Exceptions
 
