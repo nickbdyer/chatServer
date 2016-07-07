@@ -6,7 +6,7 @@ import java.net.ServerSocket;
 public class Main {
 
     public static void main(String[] args) throws IOException {
-        new ChatServer(new ServerSocket(UserInputValidator.getPortNumber(args)), System.out).listen();
+        new ChatServer(new ServerSocket(UserInputValidator.getPortNumber(args)), System.out).acceptConnections();
     }
 
 }

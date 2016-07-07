@@ -21,6 +21,8 @@ public class ChatServerTest {
     private ServerSocket serverSocket;
     private OutputStream receivedMessage;
     private ChatServer chatServer;
+    private Socket client1;
+    private Socket client2;
 
     @Before
     public void setUp() throws IOException {
@@ -62,28 +64,19 @@ public class ChatServerTest {
     }
 
     @Test
-    public void aServerCanReceiveMessagesFromMulitpleClients() throws IOException, InterruptedException {
+    public void aServerCanReceiveMessagesFromMultipleClients() throws IOException, InterruptedException {
         Thread serverThread = new Thread(chatServer::acceptConnections, "Server Thread");
         serverThread.setUncaughtExceptionHandler((th, ex) -> System.out.println("Uncaught exception: " + ex));
         serverThread.start();
 
-        sendTwoMessagesFromTwoDifferentSockets();
+        client1 = new Socket("localhost", 4440);
+        client2 = new Socket("localhost", 4440);
+        new PrintWriter(client1.getOutputStream(), true).println("Client1: Message");
+        new PrintWriter(client2.getOutputStream(), true).println("Client2: Another Message");
 
         assertEquals("Client1: Message\nClient2: Another Message\n", receivedMessage.toString());
-    }
-
-    private void sendTwoMessagesFromTwoDifferentSockets() throws InterruptedException {
-        Thread clientThreads = new Thread(() -> {
-            try {
-                sendMessageFromClientToServer(new Socket("localhost", 4440), "Client1: Message");
-                sendMessageFromClientToServer(new Socket("localhost", 4440), "Client2: Another Message");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        );
-        clientThreads.start();
-        clientThreads.join();
+        client1.close();
+        client2.close();
     }
 
     //Tests for Raised Exceptions
