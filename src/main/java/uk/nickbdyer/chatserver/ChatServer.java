@@ -18,15 +18,7 @@ public class ChatServer {
     public void listen() {
         try {
             clientSocket = serverSocket.accept();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public void receiveMessage() {
-        try {
-            ChatRoom chatRoom = new ChatRoom(clientSocket.getInputStream(), output);
-            chatRoom.sendInputToOutput();
+            new ChatRoom(clientSocket.getInputStream(), output).sendInputToOutput();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
