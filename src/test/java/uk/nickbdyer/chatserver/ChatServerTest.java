@@ -63,7 +63,10 @@ public class ChatServerTest {
     
     @Test
     public void aServerCanReceiveMessagesFromMulitpleClients() throws IOException, InterruptedException {
-        makeSocketConnectionAndSendMessage("Client1: Message");
+        Thread serverThread = new Thread(chatServer::acceptConnections);
+        serverThread.start();
+
+        sendMessageFromClientToServer(new Socket("localhost", 4440), "Client1: Message");
         sendMessageFromClientToServer(new Socket("localhost", 4440), "Client2: Another Message");
 
         assertEquals("Client1: Message\nClient2: Another Message\n", receivedMessage.toString());

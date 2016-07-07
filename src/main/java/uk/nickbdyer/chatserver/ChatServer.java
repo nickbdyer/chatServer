@@ -15,6 +15,12 @@ public class ChatServer {
         this.output = receivedMessage;
     }
 
+    public void acceptConnections() {
+        while (true) {
+           listen();
+        }
+    }
+
     public void listen() {
         try {
             clientSocket = serverSocket.accept();
