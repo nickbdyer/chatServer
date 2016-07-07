@@ -7,7 +7,6 @@ import java.net.Socket;
 public class ChatServer {
 
     private ServerSocket serverSocket;
-    private Socket clientSocket;
     private OutputStream output;
 
     public ChatServer(ServerSocket serverSocket, OutputStream receivedMessage) {
@@ -17,7 +16,7 @@ public class ChatServer {
 
     public void listen() {
         try {
-            clientSocket = serverSocket.accept();
+            Socket clientSocket = serverSocket.accept();
             new ChatRoom(clientSocket.getInputStream(), output).sendInputToOutput();
         } catch (IOException e) {
             throw new RuntimeException(e);
