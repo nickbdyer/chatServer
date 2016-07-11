@@ -3,8 +3,8 @@ package uk.nickbdyer.chatserver;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import uk.nickbdyer.chatserver.mockObjects.FaultyServerSocket;
-import uk.nickbdyer.chatserver.mockObjects.MockServerSocket;
+import uk.nickbdyer.chatserver.testdoubles.FaultyServerSocketStub;
+import uk.nickbdyer.chatserver.testdoubles.ServerSocketStub;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -73,6 +73,7 @@ public class ChatServerTest {
         client2 = new Socket("localhost", 4440);
         new PrintWriter(client1.getOutputStream(), true).println("Client1: Message");
         new PrintWriter(client2.getOutputStream(), true).println("Client2: Another Message");
+        new PrintWriter(client1.getOutputStream(), true).println("Client1: Final Message");
 
         assertEquals("Client1: Message\nClient2: Another Message\n", receivedMessage.toString());
         client1.close();
@@ -83,16 +84,16 @@ public class ChatServerTest {
 
     @Test(expected = RuntimeException.class)
     public void ifTheServerSocketCannotAcceptConnectionsARunTimeExceptionWillBeThrown() throws IOException {
-        FaultyServerSocket faultyServerSocket = new FaultyServerSocket();
-        ChatServer chatServer = new ChatServer(faultyServerSocket, receivedMessage);
+        FaultyServerSocketStub faultyServerSocketStub = new FaultyServerSocketStub();
+        ChatServer chatServer = new ChatServer(faultyServerSocketStub, receivedMessage);
 
         chatServer.listen();
     }
 
     @Test(expected = RuntimeException.class)
     public void ifTheServerSocketCannotGetInputStreamARunTimeExceptionWillBeThrown() throws IOException {
-        MockServerSocket mockServerSocket = new MockServerSocket();
-        ChatServer chatServer = new ChatServer(mockServerSocket, receivedMessage);
+        ServerSocketStub serverSocketStub = new ServerSocketStub();
+        ChatServer chatServer = new ChatServer(serverSocketStub, receivedMessage);
 
         chatServer.listen();
     }

@@ -3,7 +3,7 @@ package uk.nickbdyer.chatserver;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import uk.nickbdyer.chatserver.mockObjects.UnReadableInputStream;
+import uk.nickbdyer.chatserver.testdoubles.UnReadableInputStreamStub;
 
 import java.io.*;
 
@@ -65,7 +65,7 @@ public class ChatRoomTest {
 
     @Test(expected=RuntimeException.class)
     public void throwsExceptionIfInputStreamIsUnreadable() {
-        InputStream in = new UnReadableInputStream();
+        InputStream in = new UnReadableInputStreamStub();
         ChatRoom chatRoom = new ChatRoom(in, out);
 
         chatRoom.sendInputToOutput();
