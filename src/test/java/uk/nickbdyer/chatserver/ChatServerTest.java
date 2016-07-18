@@ -36,14 +36,6 @@ public class ChatServerTest {
     }
 
     @Test
-    public void aClientSocketCanConnectToTheServer() throws IOException, InterruptedException {
-
-        Socket clientSocket = new Socket("localhost", 4440);
-
-        assertTrue(clientSocket.isConnected());
-    }
-
-    @Test
     public void aConnectedClientCanSendAMessageToTheServer() throws InterruptedException, IOException {
         makeSocketConnectionAndSendMessage("A Message");
 
