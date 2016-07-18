@@ -17,7 +17,7 @@ public class ChatServer {
     public void listen() {
         try {
             Socket clientSocket = serverSocket.accept();
-            new User(clientSocket.getInputStream(), output).sendMessages();
+            new MessageStream(clientSocket.getInputStream(), output).send();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

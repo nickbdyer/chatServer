@@ -9,7 +9,7 @@ import java.io.*;
 
 import static org.junit.Assert.assertEquals;
 
-public class UserTest {
+public class MessageStreamTest {
 
     private OutputStream out;
 
@@ -26,9 +26,9 @@ public class UserTest {
     @Test
     public void outputsANothingWhenNothingIsSent() {
         InputStream in = new ByteArrayInputStream("".getBytes());
-        User user = new User(in, out);
+        MessageStream messageStream = new MessageStream(in, out);
 
-        user.sendMessages();
+        messageStream.send();
 
         assertEquals("", out.toString());
     }
@@ -36,9 +36,9 @@ public class UserTest {
     @Test
     public void outputsANewLineWhenInputIsEmptyStringWithNewLine() {
         InputStream in = new ByteArrayInputStream("\n".getBytes());
-        User user = new User(in, out);
+        MessageStream messageStream = new MessageStream(in, out);
 
-        user.sendMessages();
+        messageStream.send();
 
         assertEquals("\n", out.toString());
     }
@@ -46,9 +46,9 @@ public class UserTest {
     @Test
     public void outputsHelloWhenTheInputIsHello() {
         InputStream in = new ByteArrayInputStream("Hello".getBytes());
-        User user = new User(in, out);
+        MessageStream messageStream = new MessageStream(in, out);
 
-        user.sendMessages();
+        messageStream.send();
 
         assertEquals("Hello\n", out.toString());
     }
@@ -56,9 +56,9 @@ public class UserTest {
     @Test
     public void outputsHiWhenTheInputIsHi() {
         InputStream in = new ByteArrayInputStream("Hi".getBytes());
-        User user = new User(in, out);
+        MessageStream messageStream = new MessageStream(in, out);
 
-        user.sendMessages();
+        messageStream.send();
 
         assertEquals("Hi\n", out.toString());
     }
@@ -66,9 +66,9 @@ public class UserTest {
     @Test(expected=RuntimeException.class)
     public void throwsExceptionIfInputStreamIsUnreadable() {
         InputStream in = new UnReadableInputStreamStub();
-        User user = new User(in, out);
+        MessageStream messageStream = new MessageStream(in, out);
 
-        user.sendMessages();
+        messageStream.send();
     }
 
 }
