@@ -9,7 +9,7 @@ import java.io.*;
 
 import static org.junit.Assert.assertEquals;
 
-public class ChatRoomTest {
+public class UserTest {
 
     private OutputStream out;
 
@@ -26,9 +26,9 @@ public class ChatRoomTest {
     @Test
     public void outputsANothingWhenNothingIsSent() {
         InputStream in = new ByteArrayInputStream("".getBytes());
-        ChatRoom chatRoom = new ChatRoom(in, out);
+        User user = new User(in, out);
 
-        chatRoom.sendInputToOutput();
+        user.sendMessages();
 
         assertEquals("", out.toString());
     }
@@ -36,9 +36,9 @@ public class ChatRoomTest {
     @Test
     public void outputsANewLineWhenInputIsEmptyStringWithNewLine() {
         InputStream in = new ByteArrayInputStream("\n".getBytes());
-        ChatRoom chatRoom = new ChatRoom(in, out);
+        User user = new User(in, out);
 
-        chatRoom.sendInputToOutput();
+        user.sendMessages();
 
         assertEquals("\n", out.toString());
     }
@@ -46,9 +46,9 @@ public class ChatRoomTest {
     @Test
     public void outputsHelloWhenTheInputIsHello() {
         InputStream in = new ByteArrayInputStream("Hello".getBytes());
-        ChatRoom chatRoom = new ChatRoom(in, out);
+        User user = new User(in, out);
 
-        chatRoom.sendInputToOutput();
+        user.sendMessages();
 
         assertEquals("Hello\n", out.toString());
     }
@@ -56,9 +56,9 @@ public class ChatRoomTest {
     @Test
     public void outputsHiWhenTheInputIsHi() {
         InputStream in = new ByteArrayInputStream("Hi".getBytes());
-        ChatRoom chatRoom = new ChatRoom(in, out);
+        User user = new User(in, out);
 
-        chatRoom.sendInputToOutput();
+        user.sendMessages();
 
         assertEquals("Hi\n", out.toString());
     }
@@ -66,9 +66,9 @@ public class ChatRoomTest {
     @Test(expected=RuntimeException.class)
     public void throwsExceptionIfInputStreamIsUnreadable() {
         InputStream in = new UnReadableInputStreamStub();
-        ChatRoom chatRoom = new ChatRoom(in, out);
+        User user = new User(in, out);
 
-        chatRoom.sendInputToOutput();
+        user.sendMessages();
     }
 
 }
