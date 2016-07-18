@@ -49,30 +49,6 @@ public class ChatServerTest {
         assertEquals("A Message\nAnother Message\n", receivedMessage.toString());
     }
     
-
-    @Ignore
-    @Test
-    public void multipleClientsCanConnectToTheServer() throws IOException {
-        ChatServer chatServer = new ChatServer(new ServerSocket(4444), receivedMessage);
-        ExecutorService executorService = Executors.newSingleThreadExecutor();
-        executorService.submit(chatServer::listen);
-
-        Socket client1 = createClient();
-        PrintWriter output = new PrintWriter(client1.getOutputStream(), true);
-        output.println("A Message");
-
-        Socket client2 = createClient();
-        PrintWriter output2 = new PrintWriter(client2.getOutputStream(), true);
-        output2.println("Another Message");
-
-        output.println("Final Message");
-
-        executorService.shutdown();
-
-        assertEquals("A Message\nAnother Message\nFinal Message", receivedMessage.toString());
-    }
-
-
     @Test(expected = RuntimeException.class)
     public void ifTheServerSocketCannotAcceptConnectionsARunTimeExceptionWillBeThrown() throws IOException {
         FaultyServerSocketStub faultyServerSocketStub = new FaultyServerSocketStub();
