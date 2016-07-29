@@ -5,7 +5,6 @@ import org.junit.Test;
 import uk.nickbdyer.chatserver.testdoubles.FakeUser;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItem;
@@ -67,7 +66,7 @@ public class ChatRoomTest {
     }
 
     private ArrayList<String> emptyMessageList() {
-        return new ArrayList<String>();
+        return new ArrayList<>();
     }
 
 }
