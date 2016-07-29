@@ -79,8 +79,4 @@ public class ChatServerTest {
         output.close();
     }
 
-    private Socket createClient() throws IOException {
-        return new Socket("localhost", 4444);
-    }
-
 }
