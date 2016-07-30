@@ -27,4 +27,8 @@ public class ChatRoom {
     public void addUser(User user) {
         users.add(user);
     }
+
+    public int numberOfUsers() {
+        return users.size();
+    }
 }

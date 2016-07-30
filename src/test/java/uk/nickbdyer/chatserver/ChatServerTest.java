@@ -2,7 +2,6 @@ package uk.nickbdyer.chatserver;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import uk.nickbdyer.chatserver.testdoubles.FaultyServerSocketStub;
 import uk.nickbdyer.chatserver.testdoubles.ServerSocketStub;
@@ -21,12 +20,14 @@ public class ChatServerTest {
     private ServerSocket serverSocket;
     private OutputStream receivedMessage;
     private ChatServer chatServer;
+    private ChatRoom chatRoom;
 
     @Before
     public void setUp() throws IOException {
         receivedMessage = new ByteArrayOutputStream();
         serverSocket = new ServerSocket(4440);
-        chatServer = new ChatServer(serverSocket, receivedMessage);
+        chatRoom = new ChatRoom();
+        chatServer = new ChatServer(chatRoom, serverSocket, receivedMessage);
     }
 
     @After
@@ -48,11 +49,23 @@ public class ChatServerTest {
 
         assertEquals("A Message\nAnother Message\n", receivedMessage.toString());
     }
+
+    @Test
+    public void whenASocketConnectionIsMadeOneMemberIsAddedToTheChatRoom() throws IOException {
+        ChatRoom chatRoom = new ChatRoom();
+        ChatServer chatServer = new ChatServer(serverSocket, chatRoom);
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        executor.execute(chatServer::start);
+
+        new Socket("localhost", 4440);
+
+        assertEquals(1, chatRoom.numberOfUsers());
+    }
     
     @Test(expected = RuntimeException.class)
     public void ifTheServerSocketCannotAcceptConnectionsARunTimeExceptionWillBeThrown() throws IOException {
         FaultyServerSocketStub faultyServerSocketStub = new FaultyServerSocketStub();
-        ChatServer chatServer = new ChatServer(faultyServerSocketStub, receivedMessage);
+        ChatServer chatServer = new ChatServer(chatRoom, faultyServerSocketStub, receivedMessage);
 
         chatServer.listen();
     }
@@ -60,14 +73,13 @@ public class ChatServerTest {
     @Test(expected = RuntimeException.class)
     public void ifTheServerSocketCannotGetInputStreamARunTimeExceptionWillBeThrown() throws IOException {
         ServerSocketStub serverSocketStub = new ServerSocketStub();
-        ChatServer chatServer = new ChatServer(serverSocketStub, receivedMessage);
+        ChatServer chatServer = new ChatServer(chatRoom, serverSocketStub, receivedMessage);
 
         chatServer.listen();
     }
 
-
     private void makeSocketConnectionAndSendMessage(String message) throws IOException, InterruptedException {
-        Thread serverThread = new Thread(chatServer::listen);
+        Thread serverThread = new Thread(chatServer::listen, "Server Listening Thread");
         serverThread.start();
         sendMessageFromClientToServer(new Socket("localhost", 4440), message);
         serverThread.join();
