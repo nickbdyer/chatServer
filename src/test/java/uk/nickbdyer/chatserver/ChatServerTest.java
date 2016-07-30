@@ -9,6 +9,8 @@ import uk.nickbdyer.chatserver.testdoubles.ServerSocketStub;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -32,7 +34,7 @@ public class ChatServerTest {
 
     @After
     public void tearDown() throws IOException {
-        serverSocket.close();
+        chatServer.stop();
         receivedMessage.close();
     }
 
@@ -51,17 +53,32 @@ public class ChatServerTest {
     }
 
     @Test
-    public void whenASocketConnectionIsMadeOneMemberIsAddedToTheChatRoom() throws IOException {
+    public void whenASocketConnectionIsMadeOneMemberIsAddedToTheChatRoom() throws IOException, InterruptedException {
         ChatRoom chatRoom = new ChatRoom();
-        ChatServer chatServer = new ChatServer(serverSocket, chatRoom);
-        ExecutorService executor = Executors.newSingleThreadExecutor();
-        executor.execute(chatServer::start);
+        Executor executor = Executors.newFixedThreadPool(2);
+        ChatServer chatServer = new ChatServer(executor, serverSocket, chatRoom);
+        chatServer.start();
 
         new Socket("localhost", 4440);
 
+        Thread.sleep(50);
         assertEquals(1, chatRoom.numberOfUsers());
     }
-    
+
+    @Test
+    public void whenTwoSocketConnectionsAreMadeTwoMembersAreAddedToTheChatRoom() throws IOException, InterruptedException {
+        ChatRoom chatRoom = new ChatRoom();
+        Executor executor = Executors.newFixedThreadPool(2);
+        ChatServer chatServer = new ChatServer(executor, serverSocket, chatRoom);
+        chatServer.start();
+
+        new Socket("localhost", 4440);
+        new Socket("localhost", 4440);
+
+        Thread.sleep(50);
+        assertEquals(2, chatRoom.numberOfUsers());
+    }
+
     @Test(expected = RuntimeException.class)
     public void ifTheServerSocketCannotAcceptConnectionsARunTimeExceptionWillBeThrown() throws IOException {
         FaultyServerSocketStub faultyServerSocketStub = new FaultyServerSocketStub();
