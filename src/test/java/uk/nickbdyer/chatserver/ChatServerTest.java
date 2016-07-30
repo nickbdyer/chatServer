@@ -20,36 +20,21 @@ import static org.junit.Assert.assertTrue;
 public class ChatServerTest {
 
     private ServerSocket serverSocket;
-    private OutputStream receivedMessage;
     private ChatServer chatServer;
     private ChatRoom chatRoom;
+    private ExecutorService executor;
 
     @Before
     public void setUp() throws IOException {
-        receivedMessage = new ByteArrayOutputStream();
         serverSocket = new ServerSocket(4440);
         chatRoom = new ChatRoom();
-        chatServer = new ChatServer(chatRoom, serverSocket, receivedMessage);
+        executor = Executors.newFixedThreadPool(2);
+        chatServer = new ChatServer(executor, serverSocket, chatRoom);
     }
 
     @After
     public void tearDown() throws IOException {
         chatServer.stop();
-        receivedMessage.close();
-    }
-
-    @Test
-    public void aConnectedClientCanSendAMessageToTheServer() throws InterruptedException, IOException {
-        makeSocketConnectionAndSendMessage("A Message");
-
-        assertEquals("A Message\n", receivedMessage.toString());
-    }
-
-    @Test
-    public void aConnectedClientCanSendMultipleMessagesToTheServer() throws InterruptedException, IOException {
-        makeSocketConnectionAndSendMessage("A Message\nAnother Message");
-
-        assertEquals("A Message\nAnother Message\n", receivedMessage.toString());
     }
 
     @Test
@@ -82,30 +67,9 @@ public class ChatServerTest {
     @Test(expected = RuntimeException.class)
     public void ifTheServerSocketCannotAcceptConnectionsARunTimeExceptionWillBeThrown() throws IOException {
         FaultyServerSocketStub faultyServerSocketStub = new FaultyServerSocketStub();
-        ChatServer chatServer = new ChatServer(chatRoom, faultyServerSocketStub, receivedMessage);
+        ChatServer chatServer = new ChatServer(executor, faultyServerSocketStub, chatRoom);
 
-        chatServer.listen();
-    }
-
-    @Test(expected = RuntimeException.class)
-    public void ifTheServerSocketCannotGetInputStreamARunTimeExceptionWillBeThrown() throws IOException {
-        ServerSocketStub serverSocketStub = new ServerSocketStub();
-        ChatServer chatServer = new ChatServer(chatRoom, serverSocketStub, receivedMessage);
-
-        chatServer.listen();
-    }
-
-    private void makeSocketConnectionAndSendMessage(String message) throws IOException, InterruptedException {
-        Thread serverThread = new Thread(chatServer::listen, "Server Listening Thread");
-        serverThread.start();
-        sendMessageFromClientToServer(new Socket("localhost", 4440), message);
-        serverThread.join();
-    }
-
-    private void sendMessageFromClientToServer(Socket clientSocket, String message) throws IOException {
-        PrintWriter output = new PrintWriter(clientSocket.getOutputStream(), true);
-        output.println(message);
-        output.close();
+        chatServer.awaitConnections();
     }
 
 }

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.concurrent.Executor;
 
 public class ChatServer {
@@ -47,11 +48,17 @@ public class ChatServer {
             });
     }
 
-    public Socket awaitConnections() {
+    public void awaitConnections() {
         try {
-            return serverSocket.accept();
-        } catch (IOException ignored) {}
-        return null;
+            serverSocket.accept();
+        } catch (IOException e) {
+            if (e instanceof SocketException && "Socket closed".equals(e.getMessage())) {
+                listening = false;
+                return;
+            } else {
+                throw new RuntimeException(e);
+            }
+        }
     }
 
     public void stop() {
@@ -63,7 +70,6 @@ public class ChatServer {
         }
     }
 
-    // new socket connections are represented as new members
     // new members can send messages to the chatroom
     // chatroom will broadcast those messages to all members of the chatroom
 
