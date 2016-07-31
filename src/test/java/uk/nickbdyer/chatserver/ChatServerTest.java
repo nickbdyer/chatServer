@@ -37,6 +37,8 @@ public class ChatServerTest {
         chatServer.stop();
     }
 
+    //These tests feel integration-y. Perhaps they can be improved on when more things are tied together.
+
     @Test
     public void whenASocketConnectionIsMadeOneMemberIsAddedToTheChatRoom() throws IOException, InterruptedException {
         ChatRoom chatRoom = new ChatRoom();
