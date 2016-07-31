@@ -4,12 +4,12 @@ import java.io.*;
 
 public class Member implements User {
 
-    private OutputStream output;
+    private PrintWriter output;
     private BufferedReader input;
 
     public Member(ByteArrayInputStream inputStream, ByteArrayOutputStream outputStream) {
         input = new BufferedReader(new InputStreamReader(inputStream));
-        output = outputStream;
+        output = new PrintWriter(outputStream, true);
     }
 
     public Member() {
@@ -18,7 +18,7 @@ public class Member implements User {
 
     @Override
     public void notifyNewMessage(String message) {
-
+        output.println(message);
     }
 
     public void sendMessageToRoom(String message, ChatRoom room) {

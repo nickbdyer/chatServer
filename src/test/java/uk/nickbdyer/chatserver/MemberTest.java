@@ -60,4 +60,17 @@ public class MemberTest {
         assertEquals(Arrays.asList("Hello", "How are you?"), chatRoom.messages());
     }
 
+    @Test
+    public void messagesSentToTheChatRoomWillBeReceivedOnTheOutputStream() {
+        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+        ByteArrayInputStream inContent = new ByteArrayInputStream("Hello\nHow are you?\n".getBytes());
+        ChatRoom chatRoom = new ChatRoom();
+        Member nick = new Member(inContent, outContent);
+        chatRoom.addUser(nick);
+
+        nick.sendAndReceiveMessages(chatRoom);
+
+        assertEquals("Hello\nHow are you?\n", outContent.toString());
+    }
+
 }
