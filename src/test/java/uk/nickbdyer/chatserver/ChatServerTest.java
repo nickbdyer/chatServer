@@ -3,93 +3,72 @@ package uk.nickbdyer.chatserver;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import uk.nickbdyer.chatserver.mockObjects.FaultyServerSocket;
-import uk.nickbdyer.chatserver.mockObjects.MockServerSocket;
+import uk.nickbdyer.chatserver.testdoubles.FaultyServerSocketStub;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 public class ChatServerTest {
 
     private ServerSocket serverSocket;
-    private OutputStream receivedMessage;
     private ChatServer chatServer;
+    private ChatRoom chatRoom;
+    private ExecutorService executor;
 
     @Before
     public void setUp() throws IOException {
-        receivedMessage = new ByteArrayOutputStream();
         serverSocket = new ServerSocket(4440);
-        chatServer = new ChatServer(serverSocket, receivedMessage);
+        chatRoom = new ChatRoom();
+        executor = Executors.newFixedThreadPool(2);
+        chatServer = new ChatServer(executor, serverSocket, chatRoom);
     }
 
     @After
     public void tearDown() throws IOException {
-        serverSocket.close();
-        receivedMessage.close();
+        chatServer.stop();
+    }
+
+    //These tests feel integration-y. Perhaps they can be improved on when more things are tied together.
+
+    @Test
+    public void whenASocketConnectionIsMadeOneMemberIsAddedToTheChatRoom() throws IOException, InterruptedException {
+        ChatRoom chatRoom = new ChatRoom();
+        Executor executor = Executors.newFixedThreadPool(2);
+        ChatServer chatServer = new ChatServer(executor, serverSocket, chatRoom);
+        chatServer.start();
+
+        new Socket("localhost", 4440);
+
+        Thread.sleep(50);
+        assertEquals(1, chatRoom.numberOfUsers());
     }
 
     @Test
-    public void aClientSocketCanConnectToTheServer() throws IOException, InterruptedException {
-        Thread serverThread = new Thread(chatServer::listen);
-        serverThread.start();
+    public void whenTwoSocketConnectionsAreMadeTwoMembersAreAddedToTheChatRoom() throws IOException, InterruptedException {
+        ChatRoom chatRoom = new ChatRoom();
+        Executor executor = Executors.newFixedThreadPool(2);
+        ChatServer chatServer = new ChatServer(executor, serverSocket, chatRoom);
+        chatServer.start();
 
-        Socket clientSocket = new Socket("localhost", 4440);
-        sendMessageFromClientToServer(clientSocket, "");
-        serverThread.join();
+        new Socket("localhost", 4440);
+        new Socket("localhost", 4440);
 
-        assertTrue(clientSocket.isConnected());
+        Thread.sleep(50);
+        assertEquals(2, chatRoom.numberOfUsers());
     }
 
-    @Test
-    public void aConnectedClientCanSendAMessageToTheServer() throws InterruptedException, IOException {
-        makeSocketConnectionAndSendMessage("A Message");
-
-        assertEquals("A Message\n", receivedMessage.toString());
-    }
-
-    @Test
-    public void aConnectedClientCanSendMultipleMessagesToTheServer() throws InterruptedException, IOException {
-        makeSocketConnectionAndSendMessage("A Message\nAnother Message");
-
-        assertEquals("A Message\nAnother Message\n", receivedMessage.toString());
-    }
-
-    //Tests for Raised Exceptions
-
-    @Test(expected=RuntimeException.class)
+    @Test(expected = RuntimeException.class)
     public void ifTheServerSocketCannotAcceptConnectionsARunTimeExceptionWillBeThrown() throws IOException {
-        FaultyServerSocket faultyServerSocket = new FaultyServerSocket();
-        ChatServer chatServer = new ChatServer(faultyServerSocket, receivedMessage);
+        FaultyServerSocketStub faultyServerSocketStub = new FaultyServerSocketStub();
+        ChatServer chatServer = new ChatServer(executor, faultyServerSocketStub, chatRoom);
 
-        chatServer.listen();
-    }
-
-    @Test(expected=RuntimeException.class)
-    public void ifTheServerSocketCannotGetInputStreamARunTimeExceptionWillBeThrown() throws IOException {
-        MockServerSocket mockServerSocket = new MockServerSocket();
-        ChatServer chatServer = new ChatServer(mockServerSocket, receivedMessage);
-
-        chatServer.listen();
-    }
-
-    private void makeSocketConnectionAndSendMessage(String message) throws IOException, InterruptedException {
-        Thread serverThread = new Thread(chatServer::listen);
-        serverThread.start();
-        sendMessageFromClientToServer(new Socket("localhost", 4440), message);
-        serverThread.join();
-    }
-
-    private void sendMessageFromClientToServer(Socket clientSocket, String message) throws IOException {
-        PrintWriter output = new PrintWriter(clientSocket.getOutputStream(), true);
-        output.println(message);
-        output.close();
+        chatServer.awaitConnections();
     }
 
 }

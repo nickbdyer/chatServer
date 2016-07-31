@@ -4,22 +4,22 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
-public class UserInputValidatorTest extends UserInputValidator {
+public class ArgumentsTest extends Arguments {
 
     @Test
     public void returnsPortNumberIfPresent() {
-        int portNumber = UserInputValidator.getPortNumber(new String[]{"5555"});
+        int portNumber = Arguments.getPort(new String[]{"5555"});
         assertEquals(5555, portNumber);
     }
 
     @Test
     public void returnsDefaultPortNumberIfNotPresent() {
-        int portNumber = UserInputValidator.getPortNumber(new String[]{});
+        int portNumber = Arguments.getPort(new String[]{});
         assertEquals(4444, portNumber);
     }
 
     @Test(expected = RuntimeException.class)
     public void advisesUserToPassPortAsNumberIfTheyPassAlphabeticalCharacters() {
-        UserInputValidator.getPortNumber(new String[]{"abc"});
+        Arguments.getPort(new String[]{"abc"});
     }
 }

@@ -1,74 +1,70 @@
 package uk.nickbdyer.chatserver;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import uk.nickbdyer.chatserver.mockObjects.UnReadableInputStream;
+import uk.nickbdyer.chatserver.testdoubles.FakeUser;
 
-import java.io.*;
+import java.util.ArrayList;
 
-import static org.junit.Assert.assertEquals;
+import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.hasSize;
 
 public class ChatRoomTest {
 
-    private OutputStream out;
+    private ChatRoom chatRoom;
 
     @Before
     public void setUp() {
-        out = new ByteArrayOutputStream();
-    }
-
-    @After
-    public void tearDown() throws IOException {
-        out.close();
+        chatRoom = new ChatRoom();
     }
 
     @Test
-    public void outputsANothingWhenNothingIsSent() {
-        InputStream in = new ByteArrayInputStream("".getBytes());
-        ChatRoom chatRoom = new ChatRoom(in, out);
-
-        chatRoom.sendInputToOutput();
-
-        assertEquals("", out.toString());
+    public void newChatRoomHasNoMessages() {
+        assertThat(chatRoom.messages(), is(equalTo(emptyMessageList())));
     }
 
     @Test
-    public void outputsANewLineWhenInputIsEmptyStringWithNewLine() {
-        InputStream in = new ByteArrayInputStream("\n".getBytes());
-        ChatRoom chatRoom = new ChatRoom(in, out);
+    public void keepsTrackOfPostedMessage() throws Exception {
+        chatRoom.postMessage("Some Message");
 
-        chatRoom.sendInputToOutput();
-
-        assertEquals("\n", out.toString());
+        assertThat(chatRoom.messages(), hasItem("Some Message"));
     }
 
     @Test
-    public void outputsHelloWhenTheInputIsHello() {
-        InputStream in = new ByteArrayInputStream("Hello".getBytes());
-        ChatRoom chatRoom = new ChatRoom(in, out);
+    public void keepsTrackOfPostedMessages() throws Exception {
+        chatRoom.postMessage("Some Message");
+        chatRoom.postMessage("Another Message");
 
-        chatRoom.sendInputToOutput();
-
-        assertEquals("Hello\n", out.toString());
+        assertThat(chatRoom.messages(), hasSize(2));
+        assertThat(chatRoom.messages(), hasItem("Another Message"));
     }
-    
+
     @Test
-    public void outputsHiWhenTheInputIsHi() {
-        InputStream in = new ByteArrayInputStream("Hi".getBytes());
-        ChatRoom chatRoom = new ChatRoom(in, out);
+    public void postingAMessageNotifiesTheOnlyUser() {
+        FakeUser user = new FakeUser();
+        chatRoom.addUser(user);
 
-        chatRoom.sendInputToOutput();
+        chatRoom.postMessage("Hello");
 
-        assertEquals("Hi\n", out.toString());
+        assertThat(user.receivedMessage("Hello"), is(true));
     }
 
-    @Test(expected=RuntimeException.class)
-    public void throwsExceptionIfInputStreamIsUnreadable() {
-        InputStream in = new UnReadableInputStream();
-        ChatRoom chatRoom = new ChatRoom(in, out);
+    @Test
+    public void postingAMessageNotifiesBothUsers() {
+        FakeUser userOne = new FakeUser();
+        FakeUser userTwo = new FakeUser();
+        chatRoom.addUser(userOne);
+        chatRoom.addUser(userTwo);
 
-        chatRoom.sendInputToOutput();
+        chatRoom.postMessage("Some Message");
+
+        assertThat(userOne.receivedMessage("Some Message"), is(true));
+        assertThat(userTwo.receivedMessage("Some Message"), is(true));
+    }
+
+    private ArrayList<String> emptyMessageList() {
+        return new ArrayList<>();
     }
 
 }

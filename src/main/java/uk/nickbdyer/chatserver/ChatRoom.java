@@ -1,25 +1,34 @@
 package uk.nickbdyer.chatserver;
 
-import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ChatRoom {
 
-    private BufferedReader input;
-    private PrintStream output;
+    private List<String> messages;
+    private List<User> users;
 
-    public ChatRoom(InputStream input, OutputStream output) {
-        this.input = new BufferedReader(new InputStreamReader(input));
-        this.output = new PrintStream(output);
+    public ChatRoom() {
+        messages = new ArrayList<>();
+        users = new ArrayList<>();
     }
 
-    public void sendInputToOutput() {
-        try {
-            String sentence;
-            while ((sentence = input.readLine()) != null) {
-                output.println(sentence);
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+    public List<String> messages() {
+        return messages;
+    }
+
+    public void postMessage(String message) {
+        for (User user : users) {
+            user.notifyNewMessage(message);
         }
+        messages.add(message);
+    }
+
+    public void addUser(User user) {
+        users.add(user);
+    }
+
+    public int numberOfUsers() {
+        return users.size();
     }
 }

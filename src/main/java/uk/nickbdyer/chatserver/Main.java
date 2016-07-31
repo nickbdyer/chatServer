@@ -2,11 +2,13 @@ package uk.nickbdyer.chatserver;
 
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.util.concurrent.Executors;
 
 public class Main {
 
     public static void main(String[] args) throws IOException {
-        new ChatServer(new ServerSocket(UserInputValidator.getPortNumber(args)), System.out).listen();
+        ServerSocket server = new ServerSocket(Arguments.getPort(args));
+        new ChatServer(Executors.newCachedThreadPool(),server, new ChatRoom()).start();
     }
 
 }

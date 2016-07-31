@@ -1,12 +1,12 @@
-package uk.nickbdyer.chatserver.mockObjects;
+package uk.nickbdyer.chatserver.testdoubles;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-public class FaultyServerSocket extends ServerSocket {
+public class FaultyServerSocketStub extends ServerSocket {
 
-    public FaultyServerSocket() throws IOException {
+    public FaultyServerSocketStub() throws IOException {
     }
 
     @Override
