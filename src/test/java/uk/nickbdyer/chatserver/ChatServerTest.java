@@ -4,18 +4,15 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import uk.nickbdyer.chatserver.testdoubles.FaultyServerSocketStub;
-import uk.nickbdyer.chatserver.testdoubles.ServerSocketStub;
 
-import java.io.*;
+import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 public class ChatServerTest {
 

@@ -7,7 +7,7 @@ public class Member implements User {
     private PrintWriter output;
     private BufferedReader input;
 
-    public Member(ByteArrayInputStream inputStream, ByteArrayOutputStream outputStream) {
+    public Member(InputStream inputStream, OutputStream outputStream) {
         input = new BufferedReader(new InputStreamReader(inputStream));
         output = new PrintWriter(outputStream, true);
     }

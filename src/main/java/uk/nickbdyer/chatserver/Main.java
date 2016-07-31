@@ -2,7 +2,6 @@ package uk.nickbdyer.chatserver;
 
 import java.io.IOException;
 import java.net.ServerSocket;
-import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
 public class Main {

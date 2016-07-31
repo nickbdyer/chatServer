@@ -2,6 +2,7 @@ package uk.nickbdyer.chatserver;
 
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.net.Socket;
 import java.net.SocketException;
 import java.util.concurrent.Executor;
 
@@ -22,19 +23,29 @@ public class ChatServer {
         listening = true;
             executor.execute(() -> {
                 while (listening) {
-                    awaitConnections();
-                    chatRoom.addUser(new Member());
+                    Socket client = awaitConnections();
+                    try {
+                        if (client != null) {
+                            Member newMember = new Member(client.getInputStream(), client.getOutputStream());
+                            chatRoom.addUser(newMember);
+                            executor.execute(() -> {
+                                newMember.sendAndReceiveMessages(chatRoom);
+                            });
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
             });
     }
 
-    public void awaitConnections() {
+    public Socket awaitConnections() {
         try {
-            serverSocket.accept();
+            return serverSocket.accept();
         } catch (IOException e) {
             if (e instanceof SocketException && "Socket closed".equals(e.getMessage())) {
                 listening = false;
-                return;
+                return null;
             } else {
                 throw new RuntimeException(e);
             }
@@ -49,8 +60,5 @@ public class ChatServer {
         } catch (IOException ignored) {
         }
     }
-
-    // new members can send messages to the chatroom
-    // chatroom will broadcast those messages to all members of the chatroom
 
 }

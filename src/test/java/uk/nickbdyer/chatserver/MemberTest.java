@@ -6,7 +6,6 @@ import uk.nickbdyer.chatserver.testdoubles.FakeUser;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.Arrays;
-import java.util.Collections;
 
 import static java.util.Collections.singletonList;
 import static org.junit.Assert.assertEquals;
